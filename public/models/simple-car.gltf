@@ -1,0 +1,170 @@
+{
+  "asset": {
+    "version": "2.0",
+    "generator": "Sophicar Platform"
+  },
+  "scene": 0,
+  "scenes": [
+    {
+      "nodes": [0]
+    }
+  ],
+  "nodes": [
+    {
+      "name": "SimpleCar",
+      "children": [1, 2, 3, 4, 5]
+    },
+    {
+      "name": "CarBody",
+      "mesh": 0,
+      "translation": [0, 0.5, 0]
+    },
+    {
+      "name": "WheelFL",
+      "mesh": 1,
+      "translation": [-0.8, 0.3, 1.2]
+    },
+    {
+      "name": "WheelFR",
+      "mesh": 1,
+      "translation": [0.8, 0.3, 1.2]
+    },
+    {
+      "name": "WheelRL",
+      "mesh": 1,
+      "translation": [-0.8, 0.3, -1.2]
+    },
+    {
+      "name": "WheelRR",
+      "mesh": 1,
+      "translation": [0.8, 0.3, -1.2]
+    }
+  ],
+  "meshes": [
+    {
+      "name": "CarBodyMesh",
+      "primitives": [
+        {
+          "attributes": {
+            "POSITION": 0,
+            "NORMAL": 1
+          },
+          "indices": 2,
+          "material": 0
+        }
+      ]
+    },
+    {
+      "name": "WheelMesh",
+      "primitives": [
+        {
+          "attributes": {
+            "POSITION": 3,
+            "NORMAL": 4
+          },
+          "indices": 5,
+          "material": 1
+        }
+      ]
+    }
+  ],
+  "materials": [
+    {
+      "name": "CarBodyMaterial",
+      "pbrMetallicRoughness": {
+        "baseColorFactor": [0.2, 0.6, 1.0, 1.0],
+        "metallicFactor": 0.8,
+        "roughnessFactor": 0.2
+      },
+      "emissiveFactor": [0.0, 0.2, 0.4]
+    },
+    {
+      "name": "WheelMaterial",
+      "pbrMetallicRoughness": {
+        "baseColorFactor": [0.1, 0.1, 0.1, 1.0],
+        "metallicFactor": 0.9,
+        "roughnessFactor": 0.7
+      }
+    }
+  ],
+  "accessors": [
+    {
+      "bufferView": 0,
+      "componentType": 5126,
+      "count": 24,
+      "type": "VEC3",
+      "max": [1.5, 0.8, 2.5],
+      "min": [-1.5, -0.8, -2.5]
+    },
+    {
+      "bufferView": 1,
+      "componentType": 5126,
+      "count": 24,
+      "type": "VEC3"
+    },
+    {
+      "bufferView": 2,
+      "componentType": 5123,
+      "count": 36,
+      "type": "SCALAR"
+    },
+    {
+      "bufferView": 3,
+      "componentType": 5126,
+      "count": 32,
+      "type": "VEC3",
+      "max": [0.4, 0.4, 0.4],
+      "min": [-0.4, -0.4, -0.4]
+    },
+    {
+      "bufferView": 4,
+      "componentType": 5126,
+      "count": 32,
+      "type": "VEC3"
+    },
+    {
+      "bufferView": 5,
+      "componentType": 5123,
+      "count": 60,
+      "type": "SCALAR"
+    }
+  ],
+  "bufferViews": [
+    {
+      "buffer": 0,
+      "byteOffset": 0,
+      "byteLength": 288
+    },
+    {
+      "buffer": 0,
+      "byteOffset": 288,
+      "byteLength": 288
+    },
+    {
+      "buffer": 0,
+      "byteOffset": 576,
+      "byteLength": 72
+    },
+    {
+      "buffer": 0,
+      "byteOffset": 648,
+      "byteLength": 384
+    },
+    {
+      "buffer": 0,
+      "byteOffset": 1032,
+      "byteLength": 384
+    },
+    {
+      "buffer": 0,
+      "byteOffset": 1416,
+      "byteLength": 120
+    }
+  ],
+  "buffers": [
+    {
+      "uri": "simple-car.bin",
+      "byteLength": 1536
+    }
+  ]
+}
