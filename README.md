@@ -4,7 +4,7 @@
 
 ## 🌐 在线演示
 
-- **GitHub Pages**: [https://yourusername.github.io/sophicar-3d-platform](https://yourusername.github.io/sophicar-3d-platform)
+- **GitHub Pages**: [https://chi121381.github.io/sophicar-3d-platform](https://chi121381.github.io/sophicar-3d-platform)
 - **Vercel**: [https://sophicar-3d-platform.vercel.app](https://sophicar-3d-platform.vercel.app)
 
 ## ✨ 功能特性
@@ -88,7 +88,7 @@ sophicar-3d-platform/
 
 ### 在线访问
 直接访问在线演示：
-- [GitHub Pages 版本](https://yourusername.github.io/sophicar-3d-platform)
+- [GitHub Pages 版本](https://chi121381.github.io/sophicar-3d-platform)
 - [Vercel 版本](https://sophicar-3d-platform.vercel.app)
 
 ### 本地开发
