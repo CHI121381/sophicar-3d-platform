@@ -5,8 +5,8 @@
 import { defineConfig } from 'vite';
 
 export default defineConfig({
-  // 基础路径配置
-  base: '/sophicar-3d-platform/',
+  // 基础路径配置 - Vercel部署时应该使用根路径
+  base: '/',
   
   // 构建配置
   build: {

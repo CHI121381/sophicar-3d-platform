@@ -954,9 +954,19 @@ export class LoadingAnimation {
    * Animation complete callback
    */
   onAnimationComplete() {
-    // 触发自定义事件通知动画完成
-    const event = new CustomEvent('loadingAnimationComplete');
-    this.container.dispatchEvent(event);
+    console.log('🎉 加载动画完成，准备启动主应用');
+    
+    // 添加延迟确保事件能被正确处理
+    setTimeout(() => {
+      // 触发自定义事件通知动画完成
+      const event = new CustomEvent('loadingAnimationComplete');
+      this.container.dispatchEvent(event);
+      
+      // 备用方案：直接调用全局回调
+      if (window.onLoadingComplete) {
+        window.onLoadingComplete();
+      }
+    }, 100);
   }
 
   /**

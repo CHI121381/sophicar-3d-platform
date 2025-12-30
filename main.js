@@ -39,25 +39,47 @@ class SophicarApp {
    * Initialize application
    */
   async init() {
-    // 首先启动加载动画
-    await this.startLoadingAnimation();
-    
-    // 初始化核心组件
-    this.initializeCore();
-    
-    // 设置交互控制
-    this.setupInteractions();
-    
-    // 加载示例内容
-    await this.loadExampleContent();
-    
-    // 设置隧道驾驶效果
-    this.setupTunnelDriveEffect();
-    
-    // 创建UI控制按钮
-    this.createUIControls();
-    
-    console.log('Sophicar 3D平台初始化完成 (Sophicar 3D Platform initialized)');
+    try {
+      console.log('🚀 开始初始化Sophicar 3D平台...');
+      
+      // 首先启动加载动画
+      console.log('📱 启动加载动画...');
+      await this.startLoadingAnimation();
+      console.log('✅ 加载动画完成');
+      
+      // 初始化核心组件
+      console.log('🔧 初始化核心组件...');
+      this.initializeCore();
+      console.log('✅ 核心组件初始化完成');
+      
+      // 设置交互控制
+      console.log('🎮 设置交互控制...');
+      this.setupInteractions();
+      console.log('✅ 交互控制设置完成');
+      
+      // 加载示例内容
+      console.log('📦 加载示例内容...');
+      await this.loadExampleContent();
+      console.log('✅ 示例内容加载完成');
+      
+      // 设置隧道驾驶效果
+      console.log('🚇 设置隧道驾驶效果...');
+      this.setupTunnelDriveEffect();
+      console.log('✅ 隧道驾驶效果设置完成');
+      
+      // 创建UI控制按钮
+      console.log('🎛️ 创建UI控制按钮...');
+      this.createUIControls();
+      console.log('✅ UI控制按钮创建完成');
+      
+      console.log('🎉 Sophicar 3D平台初始化完成！');
+      
+    } catch (error) {
+      console.error('❌ 应用初始化失败:', error);
+      
+      // 显示错误信息给用户
+      this.showErrorMessage('应用初始化失败，请刷新页面重试。错误信息：' + error.message);
+    }
   }
 
   /**
@@ -70,17 +92,41 @@ class SophicarApp {
       this.loadingAnimation = new LoadingAnimation(loading3D);
       window.loadingAnimation = this.loadingAnimation; // 全局引用用于窗口大小变化处理
       
+      // 设置全局回调作为备用方案
+      window.onLoadingComplete = () => {
+        console.log('🚀 通过全局回调接收到加载完成信号');
+        this.loadingAnimation.destroy();
+        this.loadingAnimation = null;
+        window.loadingAnimation = null;
+        window.onLoadingComplete = null;
+      };
+      
       // 等待加载动画完成
       return new Promise((resolve) => {
+        // 主要事件监听
         loading3D.addEventListener('loadingAnimationComplete', () => {
+          console.log('📡 接收到loadingAnimationComplete事件');
           // 延迟一点时间让用户欣赏完整的动画
           setTimeout(() => {
-            this.loadingAnimation.destroy();
-            this.loadingAnimation = null;
-            window.loadingAnimation = null;
+            if (this.loadingAnimation) {
+              this.loadingAnimation.destroy();
+              this.loadingAnimation = null;
+              window.loadingAnimation = null;
+            }
             resolve();
           }, 500);
         });
+        
+        // 备用超时机制 - 如果8秒后仍未完成，强制继续
+        setTimeout(() => {
+          console.log('⚠️ 加载动画超时，强制继续');
+          if (this.loadingAnimation) {
+            this.loadingAnimation.destroy();
+            this.loadingAnimation = null;
+            window.loadingAnimation = null;
+          }
+          resolve();
+        }, 8000);
       });
     }
   }
@@ -819,6 +865,56 @@ class SophicarApp {
         button.style.cursor = 'pointer';
       }
     }, 9000);
+  }
+
+  /**
+   * 显示错误信息
+   * Show error message
+   * @param {string} message - 错误信息
+   */
+  showErrorMessage(message) {
+    // 移除加载界面
+    const loadingContainer = document.getElementById('loadingContainer');
+    if (loadingContainer) {
+      loadingContainer.style.display = 'none';
+    }
+    
+    // 创建错误显示界面
+    const errorDiv = document.createElement('div');
+    errorDiv.style.cssText = `
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100vw;
+      height: 100vh;
+      background: linear-gradient(135deg, #0a0a0a 0%, #1a1a2e 50%, #16213e 100%);
+      color: #ff6b6b;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      font-family: 'Microsoft YaHei', Arial, sans-serif;
+      z-index: 3000;
+    `;
+    
+    errorDiv.innerHTML = `
+      <h2 style="color: #ff6b6b; margin-bottom: 20px; text-align: center;">⚠️ 应用加载失败</h2>
+      <p style="color: #40e0d0; margin-bottom: 30px; text-align: center; max-width: 600px; line-height: 1.6;">${message}</p>
+      <button onclick="location.reload()" style="
+        background: linear-gradient(135deg, #ff6b6b 0%, #ff8e8e 100%);
+        border: none;
+        border-radius: 8px;
+        color: white;
+        padding: 12px 24px;
+        font-size: 16px;
+        cursor: pointer;
+        transition: all 0.3s ease;
+      " onmouseover="this.style.transform='scale(1.05)'" onmouseout="this.style.transform='scale(1)'">
+        🔄 刷新页面
+      </button>
+    `;
+    
+    document.body.appendChild(errorDiv);
   }
 
   /**
