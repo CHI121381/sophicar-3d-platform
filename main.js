@@ -918,6 +918,56 @@ class SophicarApp {
   }
 
   /**
+   * 显示错误信息
+   * Show error message
+   * @param {string} message - 错误信息
+   */
+  showErrorMessage(message) {
+    // 移除加载界面
+    const loadingContainer = document.getElementById('loadingContainer');
+    if (loadingContainer) {
+      loadingContainer.style.display = 'none';
+    }
+    
+    // 创建错误显示界面
+    const errorDiv = document.createElement('div');
+    errorDiv.style.cssText = `
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100vw;
+      height: 100vh;
+      background: linear-gradient(135deg, #0a0a0a 0%, #1a1a2e 50%, #16213e 100%);
+      color: #ff6b6b;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      font-family: 'Microsoft YaHei', Arial, sans-serif;
+      z-index: 3000;
+    `;
+    
+    errorDiv.innerHTML = `
+      <h2 style="color: #ff6b6b; margin-bottom: 20px; text-align: center;">⚠️ 应用加载失败</h2>
+      <p style="color: #40e0d0; margin-bottom: 30px; text-align: center; max-width: 600px; line-height: 1.6;">${message}</p>
+      <button onclick="location.reload()" style="
+        background: linear-gradient(135deg, #ff6b6b 0%, #ff8e8e 100%);
+        border: none;
+        border-radius: 8px;
+        color: white;
+        padding: 12px 24px;
+        font-size: 16px;
+        cursor: pointer;
+        transition: all 0.3s ease;
+      " onmouseover="this.style.transform='scale(1.05)'" onmouseout="this.style.transform='scale(1)'">
+        🔄 刷新页面
+      </button>
+    `;
+    
+    document.body.appendChild(errorDiv);
+  }
+
+  /**
    * 销毁应用程序
    * Destroy application
    */
