@@ -226,10 +226,9 @@
     </div>
     
     <script type="module">
-      // GitHub Pages 特定的模块加载 - 使用CDN备用方案
+      // GitHub Pages 特定的模块加载
       console.log('🚀 开始加载 GitHub Pages 版本...');
       
-      // 首先尝试加载CDN版本的Three.js
       async function loadApplication() {
         try {
           console.log('📦 加载 Three.js 从 CDN...');
@@ -239,27 +238,13 @@
           window.THREE = THREE;
           console.log('✅ Three.js 加载成功');
           
-          // 然后尝试加载主应用
-          console.log('📱 尝试加载主应用...');
-          
-          try {
-            // 尝试相对路径
-            await import('./main.js');
-            console.log('✅ 主应用加载成功');
-          } catch (error) {
-            console.warn('⚠️ 主应用加载失败，尝试简化版本:', error);
-            
-            try {
-              await import('./main-simple.js');
-              console.log('✅ 简化版本加载成功');
-            } catch (simpleError) {
-              console.error('❌ 简化版本也加载失败:', simpleError);
-              throw simpleError;
-            }
-          }
+          // 加载GitHub专用版本
+          console.log('📱 加载GitHub专用应用版本...');
+          await import('./main-github.js');
+          console.log('✅ GitHub专用版本加载成功');
           
         } catch (error) {
-          console.error('❌ 应用加载完全失败:', error);
+          console.error('❌ 应用加载失败:', error);
           
           // 显示错误信息和备用选项
           const loadingContainer = document.getElementById('loadingContainer');
@@ -267,12 +252,7 @@
             loadingContainer.innerHTML = \`
               <div style="text-align: center; color: #ff6666; padding: 40px;">
                 <h2>⚠️ 应用加载失败</h2>
-                <p>可能的原因：</p>
-                <ul style="text-align: left; display: inline-block; margin: 20px 0;">
-                  <li>网络连接问题</li>
-                  <li>模块路径配置问题</li>
-                  <li>浏览器兼容性问题</li>
-                </ul>
+                <p>错误信息: \${error.message}</p>
                 <div style="margin-top: 30px;">
                   <button onclick="location.reload()" style="
                     background: #00ffff;
@@ -295,17 +275,6 @@
                     margin: 5px;
                     font-size: 14px;
                   ">🧪 测试版本</button>
-                  
-                  <button onclick="window.open('https://github.com/CHI121381/sophicar-3d-platform', '_blank')" style="
-                    background: #333;
-                    color: white;
-                    border: none;
-                    padding: 12px 24px;
-                    border-radius: 5px;
-                    cursor: pointer;
-                    margin: 5px;
-                    font-size: 14px;
-                  ">📂 查看源码</button>
                 </div>
               </div>
             \`;

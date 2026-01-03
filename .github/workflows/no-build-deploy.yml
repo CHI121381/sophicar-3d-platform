@@ -48,6 +48,11 @@ jobs:
             echo "✅ main.js copied"
           fi
           
+          if [ -f "main-github.js" ]; then
+            cp main-github.js deploy/
+            echo "✅ main-github.js copied"
+          fi
+          
           if [ -f "main-simple.js" ]; then
             cp main-simple.js deploy/
             echo "✅ main-simple.js copied"
