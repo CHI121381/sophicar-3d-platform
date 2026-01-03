@@ -30,7 +30,8 @@ jobs:
           node-version: '18'
           
       - name: Install dependencies
-        run: npm install
+        run: |
+          npm install --legacy-peer-deps
         
       - name: Build
         run: |
@@ -39,10 +40,11 @@ jobs:
           # 构建项目
           npm run build
           # 复制源文件到dist
-          cp -r src dist/
-          cp main.js dist/
-          cp main-simple.js dist/
-          cp test-simple.html dist/
+          mkdir -p dist/src
+          cp -r src/* dist/src/ 2>/dev/null || true
+          cp main.js dist/ 2>/dev/null || true
+          cp main-simple.js dist/ 2>/dev/null || true
+          cp test-simple.html dist/ 2>/dev/null || true
           # 添加.nojekyll
           touch dist/.nojekyll
           

@@ -1,0 +1,62 @@
+name: Static Deploy to GitHub Pages
+
+on:
+  push:
+    branches: [ main ]
+  workflow_dispatch:
+
+permissions:
+  contents: read
+  pages: write
+  id-token: write
+
+concurrency:
+  group: "pages"
+  cancel-in-progress: false
+
+jobs:
+  deploy:
+    environment:
+      name: github-pages
+      url: ${{ steps.deployment.outputs.page_url }}
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+        
+      - name: Prepare static files
+        run: |
+          # 创建部署目录
+          mkdir -p deploy
+          
+          # 复制所有必要文件
+          cp index-github.html deploy/index.html
+          cp -r src deploy/
+          cp main.js deploy/
+          cp main-simple.js deploy/
+          cp test-simple.html deploy/
+          
+          # 复制node_modules中的three.js
+          mkdir -p deploy/node_modules/three
+          if [ -d "node_modules/three" ]; then
+            cp -r node_modules/three/* deploy/node_modules/three/
+          fi
+          
+          # 添加.nojekyll文件
+          touch deploy/.nojekyll
+          
+          # 显示部署目录内容
+          echo "Deploy directory contents:"
+          ls -la deploy/
+          
+      - name: Setup Pages
+        uses: actions/configure-pages@v4
+        
+      - name: Upload artifact
+        uses: actions/upload-pages-artifact@v3
+        with:
+          path: ./deploy
+          
+      - name: Deploy to GitHub Pages
+        id: deployment
+        uses: actions/deploy-pages@v4

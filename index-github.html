@@ -226,34 +226,59 @@
     </div>
     
     <script type="module">
-      // GitHub Pages 特定的模块加载
-      const basePath = '/sophicar-3d-platform/';
+      // GitHub Pages 特定的模块加载 - 使用CDN备用方案
       
-      // 动态导入主模块
-      import(basePath + 'main.js').catch(error => {
-        console.error('GitHub Pages 模块加载失败，尝试相对路径:', error);
-        // 备用方案：使用相对路径
-        return import('./main.js');
-      }).catch(error => {
-        console.error('所有模块加载方案都失败:', error);
-        // 显示错误信息
-        document.getElementById('loadingContainer').innerHTML = `
-          <div style="text-align: center; color: #ff6666;">
-            <h2>⚠️ 模块加载失败</h2>
-            <p>GitHub Pages 部署可能需要时间生效</p>
-            <p>请稍后刷新页面重试</p>
-            <button onclick="location.reload()" style="
-              background: #00ffff;
-              color: #000;
-              border: none;
-              padding: 10px 20px;
-              border-radius: 5px;
-              cursor: pointer;
-              margin-top: 20px;
-            ">刷新页面</button>
-          </div>
-        `;
-      });
+      // 首先尝试加载CDN版本的Three.js
+      const script = document.createElement('script');
+      script.type = 'module';
+      script.innerHTML = `
+        // 使用CDN版本的Three.js作为备用
+        import * as THREE from 'https://unpkg.com/three@0.182.0/build/three.module.js';
+        window.THREE = THREE;
+        
+        // 然后加载主应用
+        const basePath = '/sophicar-3d-platform/';
+        
+        // 动态导入主模块
+        import(basePath + 'main.js').catch(error => {
+          console.error('GitHub Pages 模块加载失败，尝试相对路径:', error);
+          // 备用方案：使用相对路径
+          return import('./main.js');
+        }).catch(error => {
+          console.error('所有模块加载方案都失败，尝试简化版本:', error);
+          // 最后备用方案：加载简化版本
+          return import('./main-simple.js');
+        }).catch(error => {
+          console.error('所有加载方案都失败:', error);
+          // 显示错误信息
+          document.getElementById('loadingContainer').innerHTML = \`
+            <div style="text-align: center; color: #ff6666;">
+              <h2>⚠️ 模块加载失败</h2>
+              <p>GitHub Pages 部署可能需要时间生效</p>
+              <p>或者尝试访问简化版本：</p>
+              <button onclick="window.location.href='./test-simple.html'" style="
+                background: #00ffff;
+                color: #000;
+                border: none;
+                padding: 10px 20px;
+                border-radius: 5px;
+                cursor: pointer;
+                margin: 10px;
+              ">简化版本</button>
+              <button onclick="location.reload()" style="
+                background: #00ffff;
+                color: #000;
+                border: none;
+                padding: 10px 20px;
+                border-radius: 5px;
+                cursor: pointer;
+                margin: 10px;
+              ">刷新页面</button>
+            </div>
+          \`;
+        });
+      `;
+      document.head.appendChild(script);
     </script>
     <script>
       // 增强的错误处理和调试

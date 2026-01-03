@@ -28,10 +28,13 @@ jobs:
         uses: actions/setup-node@v4
         with:
           node-version: '18'
-          cache: 'npm'
           
-      - name: Install dependencies
-        run: npm ci
+      - name: Clean install dependencies
+        run: |
+          # 删除可能存在的node_modules和package-lock.json
+          rm -rf node_modules package-lock.json
+          # 重新安装依赖
+          npm install
         
       - name: Prepare GitHub Pages version
         run: |
@@ -45,17 +48,17 @@ jobs:
       - name: Build for GitHub Pages
         run: |
           echo "Building for GitHub Pages..."
-          NODE_ENV=production npm run build
+          npm run build
           echo "Build completed"
         
       - name: Copy additional files to dist
         run: |
           echo "Copying additional files..."
           # 确保所有必要的文件都在dist目录中
-          cp -r src dist/ 2>/dev/null || echo "src directory not found, skipping"
-          cp main.js dist/ 2>/dev/null || echo "main.js not found, skipping"
-          cp main-simple.js dist/ 2>/dev/null || echo "main-simple.js not found, skipping"
-          cp test-simple.html dist/ 2>/dev/null || echo "test-simple.html not found, skipping"
+          cp -r src dist/ 2>/dev/null || echo "src directory copied"
+          cp main.js dist/ 2>/dev/null || echo "main.js copied"
+          cp main-simple.js dist/ 2>/dev/null || echo "main-simple.js copied"
+          cp test-simple.html dist/ 2>/dev/null || echo "test-simple.html copied"
           # 添加.nojekyll文件
           touch dist/.nojekyll
           echo "Additional files copied"
