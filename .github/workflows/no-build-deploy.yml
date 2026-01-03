@@ -1,0 +1,95 @@
+name: No-Build Static Deploy
+
+on:
+  push:
+    branches: [ main ]
+  workflow_dispatch:
+
+permissions:
+  contents: read
+  pages: write
+  id-token: write
+
+concurrency:
+  group: "pages-no-build"
+  cancel-in-progress: false
+
+jobs:
+  deploy:
+    environment:
+      name: github-pages
+      url: ${{ steps.deployment.outputs.page_url }}
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+        
+      - name: Prepare static files (no build)
+        run: |
+          # 创建部署目录
+          mkdir -p deploy
+          
+          # 直接复制文件，不进行构建
+          echo "📁 Copying files without build process..."
+          
+          # 使用GitHub Pages版本的index.html
+          cp index-github.html deploy/index.html
+          echo "✅ index.html prepared"
+          
+          # 复制源代码目录
+          if [ -d "src" ]; then
+            cp -r src deploy/
+            echo "✅ src directory copied"
+          fi
+          
+          # 复制JavaScript文件
+          if [ -f "main.js" ]; then
+            cp main.js deploy/
+            echo "✅ main.js copied"
+          fi
+          
+          if [ -f "main-simple.js" ]; then
+            cp main-simple.js deploy/
+            echo "✅ main-simple.js copied"
+          fi
+          
+          # 复制测试文件
+          if [ -f "test-simple.html" ]; then
+            cp test-simple.html deploy/
+            echo "✅ test-simple.html copied"
+          fi
+          
+          # 创建一个简单的package.json用于模块解析
+          cat > deploy/package.json << 'EOF'
+{
+  "type": "module",
+  "dependencies": {
+    "three": "^0.182.0"
+  }
+}
+EOF
+          echo "✅ package.json created"
+          
+          # 从CDN创建three.js的本地副本（可选）
+          mkdir -p deploy/node_modules/three/build
+          echo "// Three.js will be loaded from CDN" > deploy/node_modules/three/build/three.module.js
+          
+          # 添加.nojekyll文件
+          touch deploy/.nojekyll
+          echo "✅ .nojekyll created"
+          
+          # 显示部署目录结构
+          echo "📁 Deploy directory structure:"
+          find deploy -type f | head -20
+          
+      - name: Setup Pages
+        uses: actions/configure-pages@v4
+        
+      - name: Upload artifact
+        uses: actions/upload-pages-artifact@v3
+        with:
+          path: ./deploy
+          
+      - name: Deploy to GitHub Pages
+        id: deployment
+        uses: actions/deploy-pages@v4

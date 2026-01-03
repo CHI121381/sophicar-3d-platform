@@ -227,58 +227,94 @@
     
     <script type="module">
       // GitHub Pages 特定的模块加载 - 使用CDN备用方案
+      console.log('🚀 开始加载 GitHub Pages 版本...');
       
       // 首先尝试加载CDN版本的Three.js
-      const script = document.createElement('script');
-      script.type = 'module';
-      script.innerHTML = `
-        // 使用CDN版本的Three.js作为备用
-        import * as THREE from 'https://unpkg.com/three@0.182.0/build/three.module.js';
-        window.THREE = THREE;
-        
-        // 然后加载主应用
-        const basePath = '/sophicar-3d-platform/';
-        
-        // 动态导入主模块
-        import(basePath + 'main.js').catch(error => {
-          console.error('GitHub Pages 模块加载失败，尝试相对路径:', error);
-          // 备用方案：使用相对路径
-          return import('./main.js');
-        }).catch(error => {
-          console.error('所有模块加载方案都失败，尝试简化版本:', error);
-          // 最后备用方案：加载简化版本
-          return import('./main-simple.js');
-        }).catch(error => {
-          console.error('所有加载方案都失败:', error);
-          // 显示错误信息
-          document.getElementById('loadingContainer').innerHTML = \`
-            <div style="text-align: center; color: #ff6666;">
-              <h2>⚠️ 模块加载失败</h2>
-              <p>GitHub Pages 部署可能需要时间生效</p>
-              <p>或者尝试访问简化版本：</p>
-              <button onclick="window.location.href='./test-simple.html'" style="
-                background: #00ffff;
-                color: #000;
-                border: none;
-                padding: 10px 20px;
-                border-radius: 5px;
-                cursor: pointer;
-                margin: 10px;
-              ">简化版本</button>
-              <button onclick="location.reload()" style="
-                background: #00ffff;
-                color: #000;
-                border: none;
-                padding: 10px 20px;
-                border-radius: 5px;
-                cursor: pointer;
-                margin: 10px;
-              ">刷新页面</button>
-            </div>
-          \`;
-        });
-      `;
-      document.head.appendChild(script);
+      async function loadApplication() {
+        try {
+          console.log('📦 加载 Three.js 从 CDN...');
+          
+          // 使用CDN版本的Three.js
+          const THREE = await import('https://unpkg.com/three@0.182.0/build/three.module.js');
+          window.THREE = THREE;
+          console.log('✅ Three.js 加载成功');
+          
+          // 然后尝试加载主应用
+          console.log('📱 尝试加载主应用...');
+          
+          try {
+            // 尝试相对路径
+            await import('./main.js');
+            console.log('✅ 主应用加载成功');
+          } catch (error) {
+            console.warn('⚠️ 主应用加载失败，尝试简化版本:', error);
+            
+            try {
+              await import('./main-simple.js');
+              console.log('✅ 简化版本加载成功');
+            } catch (simpleError) {
+              console.error('❌ 简化版本也加载失败:', simpleError);
+              throw simpleError;
+            }
+          }
+          
+        } catch (error) {
+          console.error('❌ 应用加载完全失败:', error);
+          
+          // 显示错误信息和备用选项
+          const loadingContainer = document.getElementById('loadingContainer');
+          if (loadingContainer) {
+            loadingContainer.innerHTML = \`
+              <div style="text-align: center; color: #ff6666; padding: 40px;">
+                <h2>⚠️ 应用加载失败</h2>
+                <p>可能的原因：</p>
+                <ul style="text-align: left; display: inline-block; margin: 20px 0;">
+                  <li>网络连接问题</li>
+                  <li>模块路径配置问题</li>
+                  <li>浏览器兼容性问题</li>
+                </ul>
+                <div style="margin-top: 30px;">
+                  <button onclick="location.reload()" style="
+                    background: #00ffff;
+                    color: #000;
+                    border: none;
+                    padding: 12px 24px;
+                    border-radius: 5px;
+                    cursor: pointer;
+                    margin: 5px;
+                    font-size: 14px;
+                  ">🔄 刷新页面</button>
+                  
+                  <button onclick="window.open('./test-simple.html', '_self')" style="
+                    background: #4CAF50;
+                    color: white;
+                    border: none;
+                    padding: 12px 24px;
+                    border-radius: 5px;
+                    cursor: pointer;
+                    margin: 5px;
+                    font-size: 14px;
+                  ">🧪 测试版本</button>
+                  
+                  <button onclick="window.open('https://github.com/CHI121381/sophicar-3d-platform', '_blank')" style="
+                    background: #333;
+                    color: white;
+                    border: none;
+                    padding: 12px 24px;
+                    border-radius: 5px;
+                    cursor: pointer;
+                    margin: 5px;
+                    font-size: 14px;
+                  ">📂 查看源码</button>
+                </div>
+              </div>
+            \`;
+          }
+        }
+      }
+      
+      // 启动应用加载
+      loadApplication();
     </script>
     <script>
       // 增强的错误处理和调试
