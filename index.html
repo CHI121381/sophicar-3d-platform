@@ -204,6 +204,21 @@
     
     <script type="module" src="./main.js"></script>
     <script>
+      // 增强的错误处理和调试
+      window.addEventListener('error', (event) => {
+        console.error('全局错误:', event.error);
+        console.error('错误详情:', {
+          message: event.message,
+          filename: event.filename,
+          lineno: event.lineno,
+          colno: event.colno
+        });
+      });
+
+      window.addEventListener('unhandledrejection', (event) => {
+        console.error('未处理的Promise拒绝:', event.reason);
+      });
+
       // 监听加载动画完成事件
       document.getElementById('loading3D').addEventListener('loadingAnimationComplete', () => {
         const loadingContainer = document.getElementById('loadingContainer');
@@ -229,6 +244,62 @@
           console.log('交互界面已激活');
         }, 1000);
       });
+      
+      // 超时保护 - 如果15秒后仍在加载界面，强制显示错误
+      setTimeout(() => {
+        const loadingContainer = document.getElementById('loadingContainer');
+        if (loadingContainer && loadingContainer.style.display !== 'none') {
+          console.error('加载超时，可能存在模块加载问题');
+          
+          // 显示详细错误信息
+          const errorDiv = document.createElement('div');
+          errorDiv.style.cssText = `
+            position: fixed;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            background: rgba(255, 0, 0, 0.9);
+            color: white;
+            padding: 30px;
+            border-radius: 10px;
+            text-align: center;
+            z-index: 9999;
+            max-width: 500px;
+            font-family: 'Microsoft YaHei', Arial, sans-serif;
+          `;
+          errorDiv.innerHTML = `
+            <h3>⚠️ 加载超时</h3>
+            <p>应用可能遇到以下问题：</p>
+            <ul style="text-align: left; margin: 15px 0;">
+              <li>JavaScript模块加载失败</li>
+              <li>网络连接问题</li>
+              <li>浏览器兼容性问题</li>
+            </ul>
+            <p>请尝试：</p>
+            <button onclick="location.reload()" style="
+              background: #fff;
+              color: #000;
+              border: none;
+              padding: 10px 20px;
+              border-radius: 5px;
+              cursor: pointer;
+              margin: 5px;
+              font-size: 14px;
+            ">刷新页面</button>
+            <button onclick="window.open('test-simple.html', '_blank')" style="
+              background: #4CAF50;
+              color: white;
+              border: none;
+              padding: 10px 20px;
+              border-radius: 5px;
+              cursor: pointer;
+              margin: 5px;
+              font-size: 14px;
+            ">测试版本</button>
+          `;
+          document.body.appendChild(errorDiv);
+        }
+      }, 15000);
       
       // 处理窗口大小变化
       window.addEventListener('resize', () => {

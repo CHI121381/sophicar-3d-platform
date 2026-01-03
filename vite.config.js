@@ -6,21 +6,25 @@ import { defineConfig } from 'vite';
 
 export default defineConfig({
   // 基础路径配置 - Vercel部署时应该使用根路径
-  base: '/',
+  base: './',
   
   // 构建配置
   build: {
     outDir: 'dist',
     assetsDir: 'assets',
     sourcemap: false,
-    minify: 'esbuild', // 改用esbuild而不是terser
+    minify: 'esbuild',
     
-    // 优化配置
+    // 确保所有资源都被正确处理
     rollupOptions: {
       output: {
         manualChunks: {
           'three': ['three']
-        }
+        },
+        // 确保文件名一致性
+        entryFileNames: 'assets/[name]-[hash].js',
+        chunkFileNames: 'assets/[name]-[hash].js',
+        assetFileNames: 'assets/[name]-[hash].[ext]'
       }
     },
     
@@ -28,7 +32,12 @@ export default defineConfig({
     assetsInlineLimit: 4096,
     
     // 目标浏览器
-    target: 'es2015'
+    target: 'es2015',
+    
+    // 确保模块正确处理
+    commonjsOptions: {
+      include: [/node_modules/]
+    }
   },
   
   // 开发服务器配置
