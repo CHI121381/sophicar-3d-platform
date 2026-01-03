@@ -3,8 +3,7 @@ name: Deploy to GitHub Pages
 on:
   push:
     branches: [ main ]
-  pull_request:
-    branches: [ main ]
+  workflow_dispatch: # 允许手动触发
 
 # 设置GITHUB_TOKEN的权限以允许部署到GitHub Pages
 permissions:
@@ -36,21 +35,35 @@ jobs:
         
       - name: Prepare GitHub Pages version
         run: |
+          echo "Preparing GitHub Pages version..."
           # 备份原始index.html
           cp index.html index-original.html
           # 使用GitHub Pages专用版本
           cp index-github.html index.html
+          echo "Index file prepared for GitHub Pages"
         
       - name: Build for GitHub Pages
-        run: NODE_ENV=production npm run build
+        run: |
+          echo "Building for GitHub Pages..."
+          NODE_ENV=production npm run build
+          echo "Build completed"
         
       - name: Copy additional files to dist
         run: |
+          echo "Copying additional files..."
           # 确保所有必要的文件都在dist目录中
-          cp -r src dist/ || true
-          cp main.js dist/ || true
-          cp main-simple.js dist/ || true
-          cp test-simple.html dist/ || true
+          cp -r src dist/ 2>/dev/null || echo "src directory not found, skipping"
+          cp main.js dist/ 2>/dev/null || echo "main.js not found, skipping"
+          cp main-simple.js dist/ 2>/dev/null || echo "main-simple.js not found, skipping"
+          cp test-simple.html dist/ 2>/dev/null || echo "test-simple.html not found, skipping"
+          # 添加.nojekyll文件
+          touch dist/.nojekyll
+          echo "Additional files copied"
+          
+      - name: List dist contents
+        run: |
+          echo "Contents of dist directory:"
+          ls -la dist/
           
       - name: Setup Pages
         uses: actions/configure-pages@v4
