@@ -1,0 +1,367 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Sophicar 3D数字交互平台</title>
+    <style>
+      body {
+        margin: 0;
+        padding: 0;
+        font-family: 'Microsoft YaHei', 'Orbitron', Arial, sans-serif;
+        background: #0a0a0a;
+        color: white;
+        overflow: hidden;
+      }
+      
+      /* 加载动画容器 */
+      .loading-container {
+        position: fixed;
+        top: 0;
+        left: 0;
+        width: 100vw;
+        height: 100vh;
+        background: linear-gradient(135deg, #0a0a0a 0%, #1a1a2e 50%, #16213e 100%);
+        z-index: 2000;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+      }
+      
+      .loading-3d {
+        width: 100%;
+        height: 100%;
+        position: relative;
+      }
+      
+      /* 加载提示文字 */
+      .loading-text {
+        position: absolute;
+        bottom: 10%;
+        left: 50%;
+        transform: translateX(-50%);
+        text-align: center;
+        z-index: 2001;
+        opacity: 0;
+        animation: fadeInOut 3s ease-in-out infinite;
+      }
+      
+      .loading-text h2 {
+        margin: 0 0 10px 0;
+        font-size: 1.5em;
+        color: #00ffff;
+        text-shadow: 0 0 20px #00ffff;
+        letter-spacing: 3px;
+        font-weight: 300;
+      }
+      
+      .loading-text p {
+        margin: 0;
+        color: #40e0d0;
+        font-size: 1em;
+        opacity: 0.8;
+        letter-spacing: 1px;
+      }
+      
+      /* 进度条 */
+      .loading-progress {
+        position: absolute;
+        bottom: 5%;
+        left: 50%;
+        transform: translateX(-50%);
+        width: 300px;
+        height: 2px;
+        background: rgba(0, 255, 255, 0.2);
+        border-radius: 1px;
+        overflow: hidden;
+        z-index: 2001;
+      }
+      
+      .loading-progress::before {
+        content: '';
+        position: absolute;
+        top: 0;
+        left: -100%;
+        width: 100%;
+        height: 100%;
+        background: linear-gradient(90deg, transparent, #00ffff, transparent);
+        animation: progressScan 2s ease-in-out infinite;
+      }
+      
+      /* 控制面板 */
+      .controls {
+        position: fixed;
+        top: 20px;
+        left: 20px;
+        background: rgba(0, 20, 40, 0.9);
+        padding: 15px;
+        border-radius: 8px;
+        border: 1px solid #00ffff;
+        box-shadow: 0 0 20px rgba(0, 255, 255, 0.3);
+        z-index: 100;
+        font-size: 14px;
+        backdrop-filter: blur(10px);
+        display: none;
+      }
+      
+      .controls h3 {
+        margin: 0 0 10px 0;
+        color: #00ffff;
+        text-shadow: 0 0 10px #00ffff;
+        font-weight: 300;
+        letter-spacing: 1px;
+      }
+      
+      .controls ul {
+        margin: 0;
+        padding-left: 20px;
+        color: #40e0d0;
+      }
+      
+      .controls li {
+        margin-bottom: 5px;
+        opacity: 0.9;
+      }
+      
+      /* 动画关键帧 */
+      @keyframes fadeInOut {
+        0%, 100% { opacity: 0; }
+        50% { opacity: 1; }
+      }
+      
+      @keyframes progressScan {
+        0% { left: -100%; }
+        100% { left: 100%; }
+      }
+      
+      /* 赛博朋克网格背景 */
+      .cyber-grid {
+        position: fixed;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 100%;
+        background-image: 
+          linear-gradient(rgba(0, 255, 255, 0.1) 1px, transparent 1px),
+          linear-gradient(90deg, rgba(0, 255, 255, 0.1) 1px, transparent 1px);
+        background-size: 50px 50px;
+        animation: gridMove 20s linear infinite;
+        z-index: 1;
+        opacity: 0.3;
+      }
+      
+      @keyframes gridMove {
+        0% { transform: translate(0, 0); }
+        100% { transform: translate(50px, 50px); }
+      }
+      
+      /* 隐藏类 */
+      .hidden {
+        display: none !important;
+      }
+      
+      /* 淡出动画 */
+      .fade-out {
+        animation: fadeOut 1s ease-out forwards;
+      }
+      
+      @keyframes fadeOut {
+        0% { opacity: 1; }
+        100% { opacity: 0; }
+      }
+
+      /* GitHub Pages 特定样式 */
+      .github-info {
+        position: fixed;
+        top: 20px;
+        right: 20px;
+        background: rgba(0, 20, 40, 0.9);
+        padding: 10px;
+        border-radius: 8px;
+        border: 1px solid #00ffff;
+        box-shadow: 0 0 20px rgba(0, 255, 255, 0.3);
+        z-index: 100;
+        font-size: 12px;
+        backdrop-filter: blur(10px);
+        color: #40e0d0;
+      }
+    </style>
+  </head>
+  <body>
+    <!-- 赛博朋克网格背景 -->
+    <div class="cyber-grid"></div>
+    
+    <!-- GitHub Pages 信息 -->
+    <div class="github-info">
+      <div>🚀 GitHub Pages</div>
+      <div>完整功能版本</div>
+    </div>
+    
+    <!-- 3D加载动画容器 -->
+    <div class="loading-container" id="loadingContainer">
+      <div class="loading-3d" id="loading3D"></div>
+      
+      <!-- 加载提示文字 -->
+      <div class="loading-text">
+        <h2>SOPHICAR</h2>
+        <p>3D数字交互平台正在启动...</p>
+      </div>
+      
+      <!-- 进度条 -->
+      <div class="loading-progress"></div>
+    </div>
+    
+    <!-- 控制面板 -->
+    <div class="controls" id="controls">
+      <h3>操作说明</h3>
+      <ul>
+        <li>鼠标左键拖拽：旋转视角</li>
+        <li>鼠标右键拖拽：平移视角</li>
+        <li>鼠标滚轮：缩放</li>
+        <li>R键：重置相机</li>
+        <li>I键：打开模型导入界面</li>
+        <li>ESC键：取消选择</li>
+        <li>🚀 隧道驾驶按钮：体验驾驶模式</li>
+      </ul>
+    </div>
+    
+    <script type="module">
+      // GitHub Pages 特定的模块加载
+      const basePath = '/sophicar-3d-platform/';
+      
+      // 动态导入主模块
+      import(basePath + 'main.js').catch(error => {
+        console.error('GitHub Pages 模块加载失败，尝试相对路径:', error);
+        // 备用方案：使用相对路径
+        return import('./main.js');
+      }).catch(error => {
+        console.error('所有模块加载方案都失败:', error);
+        // 显示错误信息
+        document.getElementById('loadingContainer').innerHTML = `
+          <div style="text-align: center; color: #ff6666;">
+            <h2>⚠️ 模块加载失败</h2>
+            <p>GitHub Pages 部署可能需要时间生效</p>
+            <p>请稍后刷新页面重试</p>
+            <button onclick="location.reload()" style="
+              background: #00ffff;
+              color: #000;
+              border: none;
+              padding: 10px 20px;
+              border-radius: 5px;
+              cursor: pointer;
+              margin-top: 20px;
+            ">刷新页面</button>
+          </div>
+        `;
+      });
+    </script>
+    <script>
+      // 增强的错误处理和调试
+      window.addEventListener('error', (event) => {
+        console.error('全局错误:', event.error);
+        console.error('错误详情:', {
+          message: event.message,
+          filename: event.filename,
+          lineno: event.lineno,
+          colno: event.colno
+        });
+      });
+
+      window.addEventListener('unhandledrejection', (event) => {
+        console.error('未处理的Promise拒绝:', event.reason);
+      });
+
+      // 监听加载动画完成事件
+      document.getElementById('loading3D').addEventListener('loadingAnimationComplete', () => {
+        const loadingContainer = document.getElementById('loadingContainer');
+        const controls = document.getElementById('controls');
+        
+        console.log('加载动画完成，开始隐藏加载界面');
+        
+        // 添加淡出动画
+        loadingContainer.classList.add('fade-out');
+        
+        // 动画完成后完全移除加载界面并显示控制面板
+        setTimeout(() => {
+          // 完全移除加载容器，而不是仅仅隐藏
+          if (loadingContainer && loadingContainer.parentNode) {
+            loadingContainer.parentNode.removeChild(loadingContainer);
+            console.log('加载容器已移除');
+          }
+          
+          if (controls) {
+            controls.style.display = 'block';
+          }
+          
+          console.log('交互界面已激活');
+        }, 1000);
+      });
+      
+      // 超时保护 - 如果15秒后仍在加载界面，强制显示错误
+      setTimeout(() => {
+        const loadingContainer = document.getElementById('loadingContainer');
+        if (loadingContainer && loadingContainer.style.display !== 'none') {
+          console.error('GitHub Pages 加载超时');
+          
+          // 显示详细错误信息
+          const errorDiv = document.createElement('div');
+          errorDiv.style.cssText = `
+            position: fixed;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            background: rgba(255, 0, 0, 0.9);
+            color: white;
+            padding: 30px;
+            border-radius: 10px;
+            text-align: center;
+            z-index: 9999;
+            max-width: 500px;
+            font-family: 'Microsoft YaHei', Arial, sans-serif;
+          `;
+          errorDiv.innerHTML = `
+            <h3>⚠️ GitHub Pages 加载超时</h3>
+            <p>可能的原因：</p>
+            <ul style="text-align: left; margin: 15px 0;">
+              <li>GitHub Pages 部署尚未完成</li>
+              <li>模块路径配置问题</li>
+              <li>网络连接问题</li>
+            </ul>
+            <p>请尝试：</p>
+            <button onclick="location.reload()" style="
+              background: #fff;
+              color: #000;
+              border: none;
+              padding: 10px 20px;
+              border-radius: 5px;
+              cursor: pointer;
+              margin: 5px;
+              font-size: 14px;
+            ">刷新页面</button>
+            <button onclick="window.open('https://github.com/CHI121381/sophicar-3d-platform', '_blank')" style="
+              background: #4CAF50;
+              color: white;
+              border: none;
+              padding: 10px 20px;
+              border-radius: 5px;
+              cursor: pointer;
+              margin: 5px;
+              font-size: 14px;
+            ">查看源码</button>
+          `;
+          document.body.appendChild(errorDiv);
+        }
+      }, 15000);
+      
+      // 处理窗口大小变化
+      window.addEventListener('resize', () => {
+        if (window.loadingAnimation) {
+          window.loadingAnimation.handleResize();
+        }
+        if (window.sophicarApp) {
+          window.sophicarApp.getSceneManager().handleResize();
+        }
+      });
+    </script>
+  </body>
+</html>
