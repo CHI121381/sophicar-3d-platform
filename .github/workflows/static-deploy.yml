@@ -29,24 +29,65 @@ jobs:
           # 创建部署目录
           mkdir -p deploy
           
-          # 复制所有必要文件
+          # 复制必要文件（使用条件复制避免错误）
           cp index-github.html deploy/index.html
-          cp -r src deploy/
-          cp main.js deploy/
-          cp main-simple.js deploy/
-          cp test-simple.html deploy/
           
-          # 复制node_modules中的three.js
-          mkdir -p deploy/node_modules/three
-          if [ -d "node_modules/three" ]; then
-            cp -r node_modules/three/* deploy/node_modules/three/
+          # 复制src目录
+          if [ -d "src" ]; then
+            cp -r src deploy/
+            echo "✅ src directory copied"
+          else
+            echo "⚠️ src directory not found"
+          fi
+          
+          # 复制JavaScript文件
+          if [ -f "main.js" ]; then
+            cp main.js deploy/
+            echo "✅ main.js copied"
+          else
+            echo "⚠️ main.js not found"
+          fi
+          
+          if [ -f "main-simple.js" ]; then
+            cp main-simple.js deploy/
+            echo "✅ main-simple.js copied"
+          else
+            echo "⚠️ main-simple.js not found"
+          fi
+          
+          if [ -f "test-simple.html" ]; then
+            cp test-simple.html deploy/
+            echo "✅ test-simple.html copied"
+          else
+            echo "⚠️ test-simple.html not found, creating basic version"
+            cat > deploy/test-simple.html << 'EOF'
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Sophicar 3D - 测试版本</title>
+    <style>
+        body { margin: 0; padding: 0; background: #0a0a0a; color: white; font-family: Arial, sans-serif; }
+        .container { display: flex; align-items: center; justify-content: center; height: 100vh; flex-direction: column; }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>🚀 Sophicar 3D 测试版本</h1>
+        <p>基础测试页面</p>
+        <button onclick="window.location.href='./index.html'" style="background: #00ffff; color: #000; border: none; padding: 10px 20px; border-radius: 5px; cursor: pointer;">返回主页</button>
+    </div>
+</body>
+</html>
+EOF
           fi
           
           # 添加.nojekyll文件
           touch deploy/.nojekyll
           
           # 显示部署目录内容
-          echo "Deploy directory contents:"
+          echo "📁 Deploy directory contents:"
           ls -la deploy/
           
       - name: Setup Pages

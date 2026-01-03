@@ -39,14 +39,39 @@ jobs:
           cp index-github.html index.html
           # 构建项目
           npm run build
-          # 复制源文件到dist
-          mkdir -p dist/src
-          cp -r src/* dist/src/ 2>/dev/null || true
-          cp main.js dist/ 2>/dev/null || true
-          cp main-simple.js dist/ 2>/dev/null || true
-          cp test-simple.html dist/ 2>/dev/null || true
+          # 复制源文件到dist（使用条件复制）
+          if [ -d "src" ]; then
+            mkdir -p dist/src
+            cp -r src/* dist/src/
+            echo "✅ src directory copied"
+          else
+            echo "⚠️ src directory not found"
+          fi
+          
+          if [ -f "main.js" ]; then
+            cp main.js dist/
+            echo "✅ main.js copied"
+          else
+            echo "⚠️ main.js not found"
+          fi
+          
+          if [ -f "main-simple.js" ]; then
+            cp main-simple.js dist/
+            echo "✅ main-simple.js copied"
+          else
+            echo "⚠️ main-simple.js not found"
+          fi
+          
+          if [ -f "test-simple.html" ]; then
+            cp test-simple.html dist/
+            echo "✅ test-simple.html copied"
+          else
+            echo "⚠️ test-simple.html not found"
+          fi
+          
           # 添加.nojekyll
           touch dist/.nojekyll
+          echo "✅ Build completed"
           
       - name: Setup Pages
         uses: actions/configure-pages@v4

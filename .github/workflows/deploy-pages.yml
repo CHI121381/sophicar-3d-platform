@@ -54,14 +54,38 @@ jobs:
       - name: Copy additional files to dist
         run: |
           echo "Copying additional files..."
-          # 确保所有必要的文件都在dist目录中
-          cp -r src dist/ 2>/dev/null || echo "src directory copied"
-          cp main.js dist/ 2>/dev/null || echo "main.js copied"
-          cp main-simple.js dist/ 2>/dev/null || echo "main-simple.js copied"
-          cp test-simple.html dist/ 2>/dev/null || echo "test-simple.html copied"
+          # 确保所有必要的文件都在dist目录中（使用条件复制）
+          if [ -d "src" ]; then
+            cp -r src dist/
+            echo "✅ src directory copied"
+          else
+            echo "⚠️ src directory not found"
+          fi
+          
+          if [ -f "main.js" ]; then
+            cp main.js dist/
+            echo "✅ main.js copied"
+          else
+            echo "⚠️ main.js not found"
+          fi
+          
+          if [ -f "main-simple.js" ]; then
+            cp main-simple.js dist/
+            echo "✅ main-simple.js copied"
+          else
+            echo "⚠️ main-simple.js not found"
+          fi
+          
+          if [ -f "test-simple.html" ]; then
+            cp test-simple.html dist/
+            echo "✅ test-simple.html copied"
+          else
+            echo "⚠️ test-simple.html not found, skipping"
+          fi
+          
           # 添加.nojekyll文件
           touch dist/.nojekyll
-          echo "Additional files copied"
+          echo "✅ Additional files processing completed"
           
       - name: List dist contents
         run: |
