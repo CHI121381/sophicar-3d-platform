@@ -240,8 +240,11 @@
           
           // 加载GitHub专用版本
           console.log('📱 加载GitHub专用应用版本...');
-          await import('./main-github.js');
+          const { GitHubSophicarApp } = await import('./main-github.js');
           console.log('✅ GitHub专用版本加载成功');
+          
+          // 启动应用
+          window.githubSophicarApp = new GitHubSophicarApp();
           
         } catch (error) {
           console.error('❌ 应用加载失败:', error);
@@ -249,35 +252,17 @@
           // 显示错误信息和备用选项
           const loadingContainer = document.getElementById('loadingContainer');
           if (loadingContainer) {
-            loadingContainer.innerHTML = \`
-              <div style="text-align: center; color: #ff6666; padding: 40px;">
-                <h2>⚠️ 应用加载失败</h2>
-                <p>错误信息: \${error.message}</p>
-                <div style="margin-top: 30px;">
-                  <button onclick="location.reload()" style="
-                    background: #00ffff;
-                    color: #000;
-                    border: none;
-                    padding: 12px 24px;
-                    border-radius: 5px;
-                    cursor: pointer;
-                    margin: 5px;
-                    font-size: 14px;
-                  ">🔄 刷新页面</button>
-                  
-                  <button onclick="window.open('./test-simple.html', '_self')" style="
-                    background: #4CAF50;
-                    color: white;
-                    border: none;
-                    padding: 12px 24px;
-                    border-radius: 5px;
-                    cursor: pointer;
-                    margin: 5px;
-                    font-size: 14px;
-                  ">🧪 测试版本</button>
-                </div>
-              </div>
-            \`;
+            const errorHTML = [
+              '<div style="text-align: center; color: #ff6666; padding: 40px;">',
+              '<h2>⚠️ 应用加载失败</h2>',
+              '<p>错误信息: ' + error.message + '</p>',
+              '<div style="margin-top: 30px;">',
+              '<button onclick="location.reload()" style="background: #00ffff; color: #000; border: none; padding: 12px 24px; border-radius: 5px; cursor: pointer; margin: 5px; font-size: 14px;">🔄 刷新页面</button>',
+              '<button onclick="window.open(\'./test-simple.html\', \'_self\')" style="background: #4CAF50; color: white; border: none; padding: 12px 24px; border-radius: 5px; cursor: pointer; margin: 5px; font-size: 14px;">🧪 测试版本</button>',
+              '</div>',
+              '</div>'
+            ].join('');
+            loadingContainer.innerHTML = errorHTML;
           }
         }
       }
