@@ -411,7 +411,7 @@ class SophicarApp {
       console.log('正在加载Sophicar真实车辆模型...');
       
       // 加载FBX模型文件
-      const carModel = await modelLoader.loadModel('/models/sophicar-vehicle.fbx', {
+      const carModel = await modelLoader.loadModel('./models/sophicar-vehicle.fbx', {
         scale: 0.01, // FBX模型通常比较大，需要缩小
         center: true, // 居中模型
         castShadow: true,
